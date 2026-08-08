@@ -14,6 +14,9 @@ jobs:
           node-version: '22'
 
       - name: Run Agent Script
+        env:
+          PROMPT_FILE: ../.agent.md     # Pass file path to the environment
+          ISSUE_OUTPUT: "true"
         run: |
           cd myridius-auth-demo
           npm install
