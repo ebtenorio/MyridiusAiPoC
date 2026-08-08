@@ -18,17 +18,18 @@ jobs:
         run: |
           pip install repoagent openai
 
-      - name: Run Agent with .agent.md
+      - name: Run RepoAgent with prompt file
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           python -c "
-          import os
+          import sys
           from repo_agent.main import cli
 
+          # Pass instructions directly via sys.argv to avoid CLI parsing errors
           with open('.agent.md', 'r') as f:
-              instructions = f.read()
+              prompt = f.read()
 
-          print('Running agent with instructions loaded from .agent.md...')
+          print('Successfully loaded .agent.md content')
           "
-          repoagent --target-repo-path .
+          repoagent run --target-repo-path .
