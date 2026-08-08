@@ -8,8 +8,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Run Repo Agent
-        uses: github/agent@v0
-        with:
-          prompt-file: .agent.md   # Agent instructions
-          issue-output: true       # Post outputs into Issues tab
+#      - name: Run Repo Agent
+#        uses: github/agent@v0
+#        with:
+#          prompt-file: .agent.md   # Agent instructions
+#          issue-output: true       # Post outputs into Issues tab
+
+	- name: Run Repo Agent
+          uses: repo-agent/repo-agent@v0
+          with:
+            prompt-file: .agent.md  # Agent instructions
+            issue-output: true     # Post outputs into Issues tab
+
+
