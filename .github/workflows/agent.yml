@@ -19,15 +19,24 @@ jobs:
           python -m pip install --upgrade pip
           pip install repoagent openai
 
-      - name: Verify Prompt File Exists
+      - name: Ensure .gitignore exists
         run: |
-          if [ ! -f .agent.md ]; then
-            echo "Error: .agent.md file not found in repository root."
-            exit 1
+          if [ ! -f .gitignore ]; then
+            echo "# Auto-created .gitignore for RepoAgent" > .gitignore
           fi
 
-      - name: Run RepoAgent
+      - name: Configure and Run RepoAgent
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
+          cat << 'EOF' > config.toml
+          [main]
+          target_repo_path = "."
+          hierarchy_path = ".agent.md"
+          
+          [openai]
+          api_key = "${OPENAI_API_KEY}"
+          model = "gpt-4o"
+          EOF
+
           repoagent run
