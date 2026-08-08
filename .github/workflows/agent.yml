@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ebtenorio/agent@v0
+      - uses: ./  # <-- Fix: Points directly to the root of your current repository
         with:
           prompt-file: .agent.md
           issue-output: true
