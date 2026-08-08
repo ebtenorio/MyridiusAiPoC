@@ -14,11 +14,21 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install RepoAgent
-        run: pip install repoagent
+      - name: Install dependencies
+        run: |
+          pip install repoagent openai
 
-      - name: Run RepoAgent
+      - name: Run Agent with .agent.md
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
+          python -c "
+          import os
+          from repo_agent.main import cli
+
+          with open('.agent.md', 'r') as f:
+              instructions = f.read()
+
+          print('Running agent with instructions loaded from .agent.md...')
+          "
           repoagent --target-repo-path .
