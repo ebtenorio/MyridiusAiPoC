@@ -7,6 +7,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: github/agent@v0
-        with:
-          prompt-file: .agent.md
+      - name: Show agent prompt
+        run: cat .agent.md
