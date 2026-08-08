@@ -17,8 +17,8 @@ jobs:
       - name: Install RepoAgent
         run: pip install repoagent
 
-      - name: Run RepoAgent with agent prompt
+      - name: Run RepoAgent
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          repoagent --target-repo-path . --instruction-file .agent.md
+          repoagent --target-repo-path .
