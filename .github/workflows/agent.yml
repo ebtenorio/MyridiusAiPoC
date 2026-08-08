@@ -8,16 +8,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Run Repo Agent
+        uses: github/agent@v0
         with:
-          node-version: '22'
-
-      - name: Run Agent Script
-        env:
-          PROMPT_FILE: ../.agent.md     # Pass file path to the environment
-          ISSUE_OUTPUT: "true"
-        run: |
-          cd myridius-auth-demo
-          npm install
-          node server.js
+          prompt-file: .agent.md   # Agent instructions
+          issue-output: true       # Post outputs into Issues tab
