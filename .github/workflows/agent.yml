@@ -7,7 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./  # <-- Fix: Points directly to the root of your current repository
-        with:
-          prompt-file: .agent.md
-          issue-output: true
+
+      - name: Run Agent Script
+        # Replace the command below with the actual terminal command required by your tool
+        # For example, if it is a Node.js script: node server.js --prompt=.agent.md
+        run: |
+          echo "Executing agent task..."
+          node server.js
