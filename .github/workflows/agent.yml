@@ -6,7 +6,18 @@ jobs:
   run-agent:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install RepoAgent
+        run: pip install repoagent
 
       - name: Run RepoAgent
-        uses: actions/run-repoagent@v1 # or openbmb/repoagent if running via custom action
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: repoagent --target-repo-path .
