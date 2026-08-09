@@ -40,11 +40,11 @@ jobs:
           [main]
           target_repo_path = "."
           hierarchy_path = ".agent.md"
-          
+          issue_output = true   # <-- add this here
+
           [openai]
           api_key = "${OPENAI_API_KEY}"
           model = "gpt-4o"
           EOF
 
-          # Run RepoAgent with PR comment output enabled
-          repoagent run --prompt-file .agent.md --issue-output true
+          repoagent run
