@@ -29,6 +29,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install --upgrade repoagent openai
 
+      - name: Check RepoAgent version
+        run: pip show repoagent
+
+      - name: Debug RepoAgent CLI
+        run: repoagent run --help
+
       - name: Ensure .gitignore exists
         run: |
           if [ ! -f .gitignore ]; then
@@ -92,4 +98,3 @@ jobs:
           compression-level: 6
           overwrite: false
           include-hidden-files: false
-          
