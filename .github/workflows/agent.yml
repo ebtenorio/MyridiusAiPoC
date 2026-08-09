@@ -24,11 +24,13 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dependencies (latest RepoAgent from GitHub)
+      - name: Install dependencies (RepoAgent from GitHub with token)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python -m pip install --upgrade pip
           pip install --upgrade openai
-          pip install git+https://github.com/qinyuluo/repoagent.git
+          pip install git+https://${GITHUB_TOKEN}@github.com/qinyuluo/repoagent.git@main
 
       - name: Check RepoAgent version
         run: pip show repoagent
