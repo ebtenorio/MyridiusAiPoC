@@ -24,11 +24,10 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dependencies (RepoAgent from GitHub with token)
+      - name: Install dependencies (PyPI release)
         run: |
           python -m pip install --upgrade pip
-          pip install --upgrade openai
-          pip install git+https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/qinyuluo/repoagent.git@main
+          pip install --upgrade repoagent openai
 
       - name: Check RepoAgent version
         run: pip show repoagent
@@ -36,32 +35,14 @@ jobs:
       - name: Debug RepoAgent CLI
         run: repoagent run --help
 
-      - name: Ensure .gitignore exists
-        run: |
-          if [ ! -f .gitignore ]; then
-            echo "# Auto-created .gitignore for RepoAgent" > .gitignore
-          fi
-
-      - name: Configure and Run RepoAgent
+      - name: Run RepoAgent
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mkdir -p markdown_docs   # ensure folder exists
-          cat << 'EOF' > config.toml
-          [main]
-          target_repo_path = "."
-          hierarchy_path = ".agent.md"
-          output_path = "markdown_docs"
-          write_outputs = true
-
-          [openai]
-          api_key = "${OPENAI_API_KEY}"
-          model = "gpt-4o"
-          EOF
-
-          # Run RepoAgent using config.toml
-          repoagent run --config config.toml
+          # v0.2.0 doesn’t support --config or file writing
+          # It will read .agent.md automatically and post comments
+          repoagent run
 
       - name: Post RepoAgent output to PR
         if: github.event_name == 'pull_request'
@@ -71,10 +52,8 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
             ### RepoAgent Output
-            RepoAgent has refreshed documentation.  
-            See generated files in `markdown_docs/`.  
-            Logs are available in the Actions run.  
-            Download the artifact for full prompt results.
+            RepoAgent has processed `.agent.md` and posted structured comments.  
+            See the PR conversation for details.
 
       - name: Post RepoAgent output to Issue
         if: github.event_name == 'issues'
@@ -84,18 +63,5 @@ jobs:
           issue-number: ${{ github.event.issue.number }}
           body: |
             ### RepoAgent Output
-            RepoAgent has refreshed documentation.  
-            See generated files in `markdown_docs/`.  
-            Logs are available in the Actions run.  
-            Download the artifact for full prompt results.
-
-      - name: Upload RepoAgent docs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: repoagent-docs
-          path: markdown_docs
-          if-no-files-found: warn
-          compression-level: 6
-          overwrite: false
-          include-hidden-files: false
+            RepoAgent has processed `.agent.md` and posted structured comments.  
+            See the Issue conversation for details.
