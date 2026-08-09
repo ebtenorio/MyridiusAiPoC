@@ -46,4 +46,5 @@ jobs:
           model = "gpt-4o"
           EOF
 
-          repoagent run
+          # Run RepoAgent with PR comment output enabled
+          repoagent run --prompt-file .agent.md --issue-output true
