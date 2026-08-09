@@ -1,0 +1,9 @@
+[main]
+target_repo_path = "."
+hierarchy_path = ".agent.md"
+output_path = "markdown_docs"
+write_outputs = true
+
+[openai]
+api_key = "${OPENAI_API_KEY}"
+model = "gpt-4o"
