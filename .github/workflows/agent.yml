@@ -62,7 +62,8 @@ jobs:
             ### RepoAgent Output
             RepoAgent has refreshed documentation.  
             See generated files in `markdown_docs/`.  
-            Logs are available in the Actions run.
+            Logs are available in the Actions run.  
+            Download the artifact for full prompt results.
 
       - name: Post RepoAgent output to Issue
         if: github.event_name == 'issues'
@@ -74,4 +75,12 @@ jobs:
             ### RepoAgent Output
             RepoAgent has refreshed documentation.  
             See generated files in `markdown_docs/`.  
-            Logs are available in the Actions run.
+            Logs are available in the Actions run.  
+            Download the artifact for full prompt results.
+
+      - name: Upload RepoAgent docs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: repoagent-docs
+          path: markdown_docs
