@@ -1,6 +1,13 @@
 name: Repo Agent
 on:
-  workflow_dispatch:
+  workflow_dispatch:        # still allows manual runs
+  pull_request:             # triggers automatically on PR events
+    types:
+      - opened              # when a new PR is created
+      - synchronize         # when commits are pushed to the PR branch
+      - reopened            # when a closed PR is reopened
+    branches:
+      - main
 
 jobs:
   run-agent:
