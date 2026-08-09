@@ -44,8 +44,6 @@ jobs:
           [main]
           target_repo_path = "."
           hierarchy_path = ".agent.md"
-          issue_output = "pr"      # post results into PR comments
-          secondary_output = "issue"  # also create/update a GitHub Issue
 
           [openai]
           api_key = "${OPENAI_API_KEY}"
@@ -53,3 +51,27 @@ jobs:
           EOF
 
           repoagent run
+
+      - name: Post RepoAgent output to PR
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ### RepoAgent Output
+            RepoAgent has refreshed documentation.  
+            See generated files in `markdown_docs/`.  
+            Logs are available in the Actions run.
+
+      - name: Post RepoAgent output to Issue
+        if: github.event_name == 'issues'
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            ### RepoAgent Output
+            RepoAgent has refreshed documentation.  
+            See generated files in `markdown_docs/`.  
+            Logs are available in the Actions run.
