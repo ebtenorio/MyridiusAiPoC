@@ -40,7 +40,10 @@ jobs:
           [main]
           target_repo_path = "."
           hierarchy_path = ".agent.md"
-          issue_output = true   # <-- add this here
+
+          # Output settings
+          issue_output = "pr"      # post results into PR comments
+          secondary_output = "issue"  # also create/update a GitHub Issue
 
           [openai]
           api_key = "${OPENAI_API_KEY}"
