@@ -24,10 +24,11 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Install dependencies (latest RepoAgent from GitHub)
         run: |
           python -m pip install --upgrade pip
-          pip install --upgrade repoagent openai
+          pip install --upgrade openai
+          pip install git+https://github.com/qinyuluo/repoagent.git
 
       - name: Check RepoAgent version
         run: pip show repoagent
@@ -59,8 +60,8 @@ jobs:
           model = "gpt-4o"
           EOF
 
-          # Run RepoAgent without unsupported flags
-          repoagent run
+          # Run RepoAgent using config.toml
+          repoagent run --config config.toml
 
       - name: Post RepoAgent output to PR
         if: github.event_name == 'pull_request'
