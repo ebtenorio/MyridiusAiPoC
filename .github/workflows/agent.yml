@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install repoagent openai
+          pip install --upgrade repoagent openai
 
       - name: Ensure .gitignore exists
         run: |
@@ -53,8 +53,8 @@ jobs:
           model = "gpt-4o"
           EOF
 
-          # The critical fix: add --write and point to config.toml
-          repoagent run --write --config config.toml
+          # Run RepoAgent using config.toml (no --write flag)
+          repoagent run --config config.toml
 
       - name: Post RepoAgent output to PR
         if: github.event_name == 'pull_request'
