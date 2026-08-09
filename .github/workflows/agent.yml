@@ -1,8 +1,13 @@
 name: Repo Agent
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
-    branches: [main]
+  workflow_dispatch:        # still allows manual runs
+  pull_request:             # triggers automatically on PR events
+    types:
+      - opened              # when a new PR is created
+      - synchronize         # when commits are pushed to the PR branch
+      - reopened            # when a closed PR is reopened
+    branches:
+      - main
 
 permissions:
   issues: write
@@ -25,6 +30,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install repoagent openai
 
+      - name: Ensure .gitignore exists
+        run: |
+          if [ ! -f .gitignore ]; then
+            echo "# Auto-created .gitignore for RepoAgent" > .gitignore
+          fi
+
       - name: Configure and Run RepoAgent
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -33,8 +44,7 @@ jobs:
           [main]
           target_repo_path = "."
           hierarchy_path = ".agent.md"
-          issue_output = "pr"      # post into PR comments
-          secondary_output = "issue"  # also create/update an Issue
+          issue_output = "pr"   # post results into PR comments
 
           [openai]
           api_key = "${OPENAI_API_KEY}"
