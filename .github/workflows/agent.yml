@@ -46,13 +46,15 @@ jobs:
           target_repo_path = "."
           hierarchy_path = ".agent.md"
           output_path = "markdown_docs"
+          write_outputs = true
 
           [openai]
           api_key = "${OPENAI_API_KEY}"
           model = "gpt-4o"
           EOF
 
-          repoagent run
+          # The critical fix: add --write and point to config.toml
+          repoagent run --write --config config.toml
 
       - name: Post RepoAgent output to PR
         if: github.event_name == 'pull_request'
@@ -86,3 +88,7 @@ jobs:
         with:
           name: repoagent-docs
           path: markdown_docs
+          if-no-files-found: warn
+          compression-level: 6
+          overwrite: false
+          include-hidden-files: false
