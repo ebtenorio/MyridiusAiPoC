@@ -40,10 +40,12 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          mkdir -p markdown_docs   # ensure folder exists
           cat << 'EOF' > config.toml
           [main]
           target_repo_path = "."
           hierarchy_path = ".agent.md"
+          output_path = "markdown_docs"
 
           [openai]
           api_key = "${OPENAI_API_KEY}"
