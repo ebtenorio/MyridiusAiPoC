@@ -1,9 +1,11 @@
 name: Repo Agent
 on:
-  workflow_dispatch:
-  pull_request:
+  workflow_dispatch:        # manual runs
+  pull_request:             # PR events
     types: [opened, synchronize, reopened]
     branches: [main]
+  issues:                   # Issue events
+    types: [opened, edited, reopened]
 
 permissions:
   contents: write
@@ -42,7 +44,8 @@ jobs:
           [main]
           target_repo_path = "."
           hierarchy_path = ".agent.md"
-          issue_output = "pr"   # post results into PR comments
+          issue_output = "pr"      # post results into PR comments
+          secondary_output = "issue"  # also create/update a GitHub Issue
 
           [openai]
           api_key = "${OPENAI_API_KEY}"
