@@ -10,6 +10,7 @@ on:
       - main
 
 permissions:
+  contents: read
   issues: write
   pull-requests: write
 
@@ -39,12 +40,14 @@ jobs:
       - name: Configure and Run RepoAgent
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cat << 'EOF' > config.toml
           [main]
           target_repo_path = "."
           hierarchy_path = ".agent.md"
-          issue_output = "pr"   # post results into PR comments
+          issue_output = "pr"      # post results into PR comments
+          secondary_output = "issue"  # also create/update a GitHub Issue
 
           [openai]
           api_key = "${OPENAI_API_KEY}"
