@@ -59,8 +59,8 @@ jobs:
           model = "gpt-4o"
           EOF
 
-          # Run RepoAgent using config.toml (no --write flag)
-          repoagent run --config config.toml
+          # Run RepoAgent without unsupported flags
+          repoagent run
 
       - name: Post RepoAgent output to PR
         if: github.event_name == 'pull_request'
