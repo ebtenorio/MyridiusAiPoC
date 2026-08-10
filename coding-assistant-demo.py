@@ -19,7 +19,7 @@ CONTEXT_FILES = [
 ]
 
 TASK = {
-    'id': 'coding-task-1',
+    'id': 'coding-task-001',
     'title': 'Add server-side password reset validation',
     'comment': 'Validate the submitted password before reset and return a safe error without leaking credentials.',
     'role': 'Backend developer maintaining a small Express authentication demo.',
