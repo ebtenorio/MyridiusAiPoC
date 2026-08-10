@@ -54,6 +54,7 @@ def load_model() -> str:
 def deterministic_result() -> dict:
     return {
         'analysis_mode': 'Deterministic sandbox output',
+        'result_source': 'Local deterministic fallback; no API request was made.',
         'assumptions': [
             'The sample Express app is illustrative and has no real database or token service.',
             'The requested change is guidance/evidence; the assistant does not edit application files.',
@@ -84,6 +85,15 @@ def deterministic_result() -> dict:
       .toBe('Password reset successful!');
   });
 });""",
+    'scaffolding': """myridius-auth-demo/auth/passwordPolicy.js
+myridius-auth-demo/test/authController.test.js
+
+// passwordPolicy.js
+exports.isValidPassword = (password) =>
+  typeof password === 'string' && password.length >= 8;
+
+// authController.test.js
+// Add unit coverage for missing, short, and valid passwords.""",
         'chat_answers': [
             'Why server-side validation? Client-side rules improve UX but cannot be trusted at an HTTP boundary.',
             'What remains uncertain? The real password policy, token validation, persistence, and test framework are not present in this sandbox.',
@@ -99,6 +109,11 @@ def deterministic_result() -> dict:
             'suggestion': 'Extract password validation into a pure helper and keep the controller responsible for HTTP responses.',
             'tradeoff': 'This improves unit-test isolation and makes policy changes clearer, but adds a file for a very small demo.',
             'approval_gate': 'Do not apply the refactor until the team confirms the password policy and test conventions.'
+        },
+        'prompt_iteration': {
+            'baseline_prompt': 'Generate code for the password reset task.',
+            'revised_prompt': 'Generate code and tests, provide three chat answers, scaffold the test boundary, identify at least three review issues, explain behavior-preserving refactoring trade-offs, and state assumptions. Do not edit files; require human approval.',
+            'improvement': 'The revised prompt makes the required evidence explicit, reducing incomplete outputs and making the result easier to review.'
         }
     }
 
@@ -118,7 +133,7 @@ def ai_result() -> dict:
         'temperature': 0.2,
         'response_format': {'type': 'json_object'},
         'messages': [
-            {'role': 'system', 'content': 'You are a cautious senior coding assistant. Return only valid JSON matching the response contract.'},
+            {'role': 'system', 'content': 'You are a cautious senior coding assistant. Return only valid JSON matching the response contract. Provide at least three developer chat answers, a project scaffolding proposal, at least three review findings across different risk areas, a behavior-preserving refactoring explanation with trade-offs, and a baseline-versus-revised prompt iteration showing improvement. Do not edit files, execute commands, expose secrets, or approve changes.'},
             {'role': 'user', 'content': json.dumps(prompt)}
         ]
     }).encode('utf-8')
@@ -140,19 +155,29 @@ def ai_result() -> dict:
     missing = required - set(result)
     if missing:
         raise RuntimeError(f'AI response is missing fields: {sorted(missing)}')
+    if len(result.get('chat_answers', [])) < 3:
+        raise RuntimeError('AI response must contain at least three chat answers.')
+    if len(result.get('review_findings', [])) < 3:
+        raise RuntimeError('AI response must contain at least three review findings.')
     result['analysis_mode'] = f"AI-generated ({load_model()})"
+    result['result_source'] = 'OpenAI-compatible API response'
+    result['provider'] = os.environ.get('OPENAI_BASE_URL', 'https://api.openai.com/v1')
+    result['model'] = load_model()
     return result
 
 
 def markdown(result: dict) -> str:
-    findings = '\n'.join(
-        f"- **{item['severity']} / {item['area']}:** {item['finding']} Remediation: {item['remediation']}"
-        for item in result['review_findings']
-    )
+    findings = '\n'.join(format_review_finding(item) for item in result['review_findings'])
+    refactoring = format_refactoring(result['refactoring'])
+    prompt_iteration = format_prompt_iteration(result['prompt_iteration'])
     return f"""# Use Case 2: AI Coding Assistant Evidence
 
 **Task:** {TASK['title']}  
 **Analysis mode:** {result['analysis_mode']}
+
+**Result source:** {result.get('result_source', 'Not recorded')}  
+**Model:** {result.get('model', 'Not recorded')}  
+**Provider endpoint:** {result.get('provider', 'Not recorded')}
 
 ## 1. Context and Prompt
 
@@ -183,23 +208,29 @@ The assistant proposes code only. It does not write this patch into the applicat
 {result['tests']}
 ```
 
-## 5. Chat Follow-up
+## 5. Project Scaffolding
+
+```text
+{result['scaffolding']}
+```
+
+## 6. Chat Follow-up
 
 {chr(10).join(f'- {item}' for item in result['chat_answers'])}
 
-## 6. AI Review Checklist
+## 7. AI Review Checklist
 
 {findings}
 
-## 7. Refactoring Recommendation
+## 8. Refactoring Recommendation
 
-**Suggestion:** {result['refactoring']['suggestion']}
+{refactoring}
 
-**Trade-off:** {result['refactoring']['tradeoff']}
+## 9. Prompt Iteration
 
-**Approval gate:** {result['refactoring']['approval_gate']}
+{prompt_iteration}
 
-## 8. Before / After Evidence
+## 10. Before / After Evidence
 
 **Before:** `handleReset` reads the request password and always returns success.
 
@@ -207,6 +238,45 @@ The assistant proposes code only. It does not write this patch into the applicat
 
 **Safety check:** no credentials, tokens, production endpoints, or application files were written by this demo. Human review is required before acceptance.
 """
+
+
+def format_prompt_iteration(item: dict | list | str) -> str:
+    if isinstance(item, str):
+        return f'**Iteration:** {item}\n\n**Observed improvement:** Human review is required to assess the improvement.'
+    if isinstance(item, list):
+        steps = '\n'.join(f'- {step}' for step in item)
+        return f'**Iteration steps:**\n{steps}\n\n**Observed improvement:** Human review is required to assess the improvement.'
+    baseline = item.get('baseline_prompt', item.get('baseline', 'Not supplied by the model.'))
+    revised = item.get('revised_prompt', item.get('revised', 'Not supplied by the model.'))
+    improvement = item.get(
+        'improvement',
+        'The revised prompt adds explicit security and validation requirements; compare both outputs during human review.'
+    )
+    return f'**Baseline prompt:** {baseline}\n\n**Revised prompt:** {revised}\n\n**Observed improvement:** {improvement}'
+
+
+def format_refactoring(item: dict | list | str) -> str:
+    if isinstance(item, str):
+        return f'**Suggestion:** {item}\n\n**Approval gate:** Human review is required before applying it.'
+    if isinstance(item, list):
+        suggestions = '\n'.join(f'- {suggestion}' for suggestion in item)
+        return f'**Suggestions:**\n{suggestions}\n\n**Approval gate:** Human review is required before applying them.'
+    suggestion = item.get('suggestion', item.get('explanation', 'No refactoring suggestion supplied.'))
+    tradeoff = item.get('tradeoff', item.get('trade_offs', 'Trade-offs require human assessment.'))
+    approval_gate = item.get('approval_gate', 'Human review is required before applying it.')
+    return f'**Suggestion:** {suggestion}\n\n**Trade-off:** {tradeoff}\n\n**Approval gate:** {approval_gate}'
+
+
+def format_review_finding(item: dict | str) -> str:
+    if isinstance(item, str):
+        return f'- **Model finding:** {item}'
+    area = item.get('area', item.get('risk_area', 'General'))
+    finding = item.get('finding', 'No finding details supplied.')
+    remediation = item.get('remediation', 'Human review required.')
+    return (
+        f"- **{item.get('severity', 'Unspecified')} / {area}:** {finding} "
+        f"Remediation: {remediation}"
+    )
 
 
 def main() -> None:
