@@ -1,5 +1,5 @@
 {
-  "id": "ticket-5",
+  "id": "ticket-6",
   "title": "Replace the success message with a confirmation page",
   "story": "As a user, I want a clear confirmation after resetting my password so I know what to do next.",
   "acceptance_criteria": [

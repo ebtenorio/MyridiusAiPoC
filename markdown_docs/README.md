@@ -2,7 +2,7 @@
 
 The following tickets were processed:
 
-- [ticket-5/report.md](ticket-5/report.md)
+- [ticket-6/report.md](ticket-6/report.md)
 
 Deterministic mode:
 
