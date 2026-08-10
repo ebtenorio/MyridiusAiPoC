@@ -1,12 +1,17 @@
 # Agent Demo Outputs
 
-The following sample tickets were processed:
+The following tickets were processed:
 
-- [ticket-1/report.md](ticket-1/report.md)
-- [ticket-2/report.md](ticket-2/report.md)
+- [ticket-5/report.md](ticket-5/report.md)
 
-Run with:
+Deterministic mode:
 
 ```bash
-npm run demo:agent
+python agent-demo.py tickets/new-ticket.json
+```
+
+AI mode:
+
+```bash
+python agent-demo.py --ai tickets/new-ticket.json
 ```

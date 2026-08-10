@@ -1,0 +1,29 @@
+{
+  "id": "ticket-5",
+  "title": "Replace the success message with a confirmation page",
+  "story": "As a user, I want a clear confirmation after resetting my password so I know what to do next.",
+  "acceptance_criteria": [
+    "A successful reset displays a clear confirmation message.",
+    "The confirmation does not expose the password or reset token.",
+    "The response provides a safe next step for the user."
+  ],
+  "impacted_files": [
+    "myridius-auth-demo/auth/authController.js",
+    "myridius-auth-demo/views/resetPassword.html"
+  ],
+  "implementation_plan": [
+    "Confirm the desired success-page content and redirect behavior.",
+    "Add a safe confirmation response without exposing credentials or tokens.",
+    "Require human approval before changing the authentication flow."
+  ],
+  "test_cases": [
+    "Integration: successful reset returns the confirmation page.",
+    "Security: confirmation output does not contain the password or token.",
+    "Regression: failed reset attempts continue to return an appropriate error."
+  ],
+  "review_findings": [
+    "The change should remain localized to the reset flow.",
+    "Avoid leaking sensitive request data in HTML responses or logs.",
+    "Confirm whether a redirect or an inline message best matches the target UX."
+  ]
+}
