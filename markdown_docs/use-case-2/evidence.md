@@ -1,11 +1,11 @@
 # Use Case 2: AI Coding Assistant Evidence
 
 **Task:** Add server-side password reset validation  
-**Analysis mode:** AI-generated (gpt-4o-mini)
+**Analysis mode:** Deterministic sandbox output
 
-**Result source:** OpenAI-compatible API response  
-**Model:** gpt-4o-mini  
-**Provider endpoint:** https://api.openai.com/v1
+**Result source:** Local deterministic fallback; no API request was made.  
+**Model:** Not recorded  
+**Provider endpoint:** Not recorded
 
 ## 1. Context and Prompt
 
@@ -22,14 +22,22 @@ Repository context was restricted to the allowlisted sample files: myridius-auth
 
 ## 2. Assumptions and Limitations
 
-- The password reset token is valid and has been verified before reaching the handleReset function.
-- The application is using a secure method to store passwords (e.g., hashing).
-- The client-side form is correctly configured to send the password in the request body.
+- The sample Express app is illustrative and has no real database or token service.
+- The requested change is guidance/evidence; the assistant does not edit application files.
+- A human developer must adapt the response to the project test runner before acceptance.
 
 ## 3. Generated Code
 
 ```javascript
-{'handleReset': "exports.handleReset = (req, res) => {\n  const { password } = req.body;\n  if (!password || password.length < 8) {\n    return res.status(400).json({ error: 'Invalid password. It must be at least 8 characters long.' });\n  }\n  // In real app: update DB with new password\n  res.send('Password reset successful!');\n};"}
+exports.handleReset = (req, res) => {
+  const { password } = req.body;
+  if (typeof password !== 'string' || password.length < 8) {
+    return res.status(400).send('Password must be at least 8 characters.');
+  }
+
+  // In real app: update DB with new password
+  return res.send('Password reset successful!');
+};
 ```
 
 The assistant proposes code only. It does not write this patch into the application.
@@ -37,42 +45,66 @@ The assistant proposes code only. It does not write this patch into the applicat
 ## 4. Generated Tests
 
 ```javascript
-[{'description': 'Test password reset with valid password', 'expected': '200 OK with success message'}, {'description': 'Test password reset with missing password', 'expected': '400 Bad Request with error message'}, {'description': 'Test password reset with short password', 'expected': '400 Bad Request with error message'}]
+describe('handleReset', () => {
+  it('rejects a missing password without exposing request data', () => {
+    const response = invoke({ body: {} });
+    expect(response.statusCode).toBe(400);
+    expect(response.body).not.toContain('undefined');
+  });
+
+  it('rejects passwords shorter than eight characters', () => {
+    expect(invoke({ body: { password: 'short' } }).statusCode).toBe(400);
+  });
+
+  it('keeps the successful response for a valid password', () => {
+    expect(invoke({ body: { password: 'valid-pass' } }).body)
+      .toBe('Password reset successful!');
+  });
+});
 ```
 
 ## 5. Project Scaffolding
 
 ```text
-{'project_structure': {'myridius-auth-demo': {'auth': {'authController.js': 'Handles authentication logic.', 'routes.js': 'Defines authentication routes.'}, 'views': {'resetPassword.html': 'HTML form for password reset.'}, 'server.js': 'Main server file.'}}}
+myridius-auth-demo/auth/passwordPolicy.js
+myridius-auth-demo/test/authController.test.js
+
+// passwordPolicy.js
+exports.isValidPassword = (password) =>
+  typeof password === 'string' && password.length >= 8;
+
+// authController.test.js
+// Add unit coverage for missing, short, and valid passwords.
 ```
 
 ## 6. Chat Follow-up
 
-- {'question': 'How do I validate the password length?', 'answer': 'You can check the length of the password in the handleReset function using `if (password.length < 8) { ... }`.'}
-- {'question': 'What should I return if the password is invalid?', 'answer': "Return a 400 status with a JSON object containing an error message, e.g., `res.status(400).json({ error: 'Invalid password.' });`."}
-- {'question': "How do I ensure I don't expose sensitive information?", 'answer': 'Make sure to never include the password or reset token in your responses or logs. Always return generic error messages.'}
+- Why server-side validation? Client-side rules improve UX but cannot be trusted at an HTTP boundary.
+- What remains uncertain? The real password policy, token validation, persistence, and test framework are not present in this sandbox.
+- What should happen next? Confirm the product policy, add token/database tests, then have a human review the patch.
 
 ## 7. AI Review Checklist
 
-- **Unspecified / Security:** The current implementation does not validate the password length, which could allow weak passwords. Remediation: Human review required.
-- **Unspecified / Error Handling:** The application does not provide user-friendly error messages for invalid password submissions. Remediation: Human review required.
-- **Unspecified / Data Exposure:** The application may inadvertently log sensitive information if not properly handled in error responses. Remediation: Human review required.
+- **High / Security:** The sample still lacks real reset-token validation and persistence safeguards. Remediation: Validate the token server-side, use a one-time expiry-aware store, and hash the new password before persistence.
+- **Medium / Error handling:** The handler has no explicit malformed-body or downstream failure path. Remediation: Add centralized error middleware and a safe generic response for unexpected failures.
+- **Medium / Testing:** There is no test runner or integration coverage in the sample repository. Remediation: Add isolated unit tests plus an HTTP test covering valid, invalid, and token-related requests.
+- **Low / Maintainability:** The minimum length is a magic number. Remediation: Move the policy to a named constant or configuration value once requirements are confirmed.
 
 ## 8. Refactoring Recommendation
 
-**Suggestion:** The refactoring involves adding password validation logic to the handleReset function. This preserves the existing functionality while ensuring that invalid passwords are rejected.
+**Suggestion:** Extract password validation into a pure helper and keep the controller responsible for HTTP responses.
 
-**Trade-off:** Trade-offs require human assessment.
+**Trade-off:** This improves unit-test isolation and makes policy changes clearer, but adds a file for a very small demo.
 
-**Approval gate:** Human review is required before applying it.
+**Approval gate:** Do not apply the refactor until the team confirms the password policy and test conventions.
 
 ## 9. Prompt Iteration
 
-**Baseline prompt:** Add server-side password reset validation.
+**Baseline prompt:** Generate code for the password reset task.
 
-**Revised prompt:** Implement server-side validation for password reset, ensuring that passwords are at least eight characters long and that no sensitive information is exposed in responses.
+**Revised prompt:** Generate code and tests, provide three chat answers, scaffold the test boundary, identify at least three review issues, explain behavior-preserving refactoring trade-offs, and state assumptions. Do not edit files; require human approval.
 
-**Observed improvement:** The revised prompt adds explicit security and validation requirements; compare both outputs during human review.
+**Observed improvement:** The revised prompt makes the required evidence explicit, reducing incomplete outputs and making the result easier to review.
 
 ## 10. Before / After Evidence
 
