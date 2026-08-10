@@ -3,6 +3,9 @@
 ## Goal
 Demonstrate a story-to-PR readiness workflow for a sandbox authentication sample repository.
 
+Use Case 2 is documented separately as a role-aware AI coding assistant workflow:
+[setup and runbook](use-case-2-setup.md), [prompt library](use-case-2-prompts.md), and [reflection](use-case-2-reflection.md).
+
 ## Steps
 1. Create or edit a ticket JSON file under the tickets folder.
 2. Run the deterministic demo script if you want to validate report generation without an API call:
@@ -15,6 +18,14 @@ Demonstrate a story-to-PR readiness workflow for a sandbox authentication sample
    ```
 4. Review the generated reports in the markdown_docs folder.
 5. Use the prompt pack and architecture diagram to explain the workflow to stakeholders.
+
+For Use Case 2, run the offline coding assistant demo:
+
+```bash
+python coding-assistant-demo.py
+```
+
+Review the generated evidence in `markdown_docs/use-case-2/evidence.md`.
 
 ## Expected Evidence
 - The completed live demo requirement is covered separately by the existing sample runs.
