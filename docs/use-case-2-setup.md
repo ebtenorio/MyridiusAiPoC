@@ -4,6 +4,8 @@
 
 This PoC demonstrates a role-aware AI coding assistant for a backend developer working in the anonymized Express password-reset sample. It supports comment-driven generation, chat follow-up, scaffolding/test ideas, review, and behavior-preserving refactoring suggestions.
 
+Use the [presenter demo script](use-case-2-demo-script.md) for the step-by-step live demonstration.
+
 ## Configuration
 
 - Provider: OpenAI-compatible Chat Completions endpoint.
