@@ -2,7 +2,7 @@
 
 ## Overview
 
-This submission presents a Proof of Concept (PoC), meaning a small working demonstration, showing how artificial intelligence can support software development in two connected use cases. Both use cases use the same anonymized Express password-reset application as a safe sample repository.
+This submission presents a Proof of Concept (PoC): a small working demonstration of artificial intelligence supporting software development in two connected use cases. Both use the same anonymized Express password-reset application.
 
 The attached documents, source files, and Use Case 1 video are the primary submission evidence. The YouTube links and GitHub repository are optional backup access points in case a reviewer has difficulty opening an attachment. The written submission is intended to be understandable without opening an external link.
 
@@ -29,7 +29,7 @@ flowchart LR
 	I --> J[Optional implementation]
 ```
 
-The model receives selected text only. It does not receive the API key, the entire workspace, or permission to execute commands or modify files. The Express application is separate from this analysis pipeline and is used only as the sample repository and optional local browser demo.
+The model receives selected text only. It does not receive the API key or the entire workspace, and it cannot execute commands or modify files. Express is the sample repository and optional local browser demo, not part of the AI control layer.
 
 ### Word-friendly architecture view
 
@@ -67,7 +67,7 @@ HUMAN REVIEW
 
 The implemented PoC demonstrates local orchestration, controlled repository reading, prompt construction, live API communication, structured-response validation, Markdown/JSON evidence generation, and a human approval boundary. It does not demonstrate an autonomous software agent with permission to change or release code.
 
-The following limitations are intentional and must be understood when reviewing the evidence:
+The following limitations define what the evidence does not prove:
 
 - The Express application is an anonymized sample. It has no real database, password-hashing service, token store, authentication provider, or production error middleware.
 - The password-reset controller is illustrative. The generated validation proposal does not by itself prove secure token validation, password persistence, or complete authentication security.
@@ -76,21 +76,21 @@ The following limitations are intentional and must be understood when reviewing 
 - Deterministic mode proves local report generation only. Live mode proves that the configured API returned a structured response, not that every recommendation is correct.
 - The PoC does not measure production time savings, model cost at scale, response quality across a large ticket set, or deployment readiness.
 
-These limitations are part of the review evidence: both use cases are designed to produce recommendations for a developer, who must confirm requirements, implement approved changes, and run appropriate tests.
+Both use cases produce recommendations. A developer must confirm requirements, implement approved changes, and run appropriate tests.
 
 ## Use Case 1: AI Agent for Story-to-PR Readiness
 
-Use Case 1 begins with a product ticket requesting a clearer confirmation page after a successful password reset. The local Python program `agent-demo.py` reads the ticket, adds context from selected sample repository files, and sends that controlled context to an OpenAI-compatible language-model endpoint when live mode is enabled.
+Use Case 1 begins with a product ticket requesting a clearer password-reset confirmation page. The local Python program `agent-demo.py` reads the ticket, adds selected repository context, and sends it to an OpenAI-compatible language-model endpoint in live mode.
 
-The program validates the structured response and writes a Markdown report. The report contains clarification questions, assumptions, impacted files, an implementation plan, test cases, review findings, and a pull-request handoff summary. The agent does not edit application files, merge code, deploy software, or approve its own recommendation.
+The program validates the response and writes a Markdown report containing assumptions, impacted files, an implementation plan, tests, review findings, and a pull-request handoff. It does not edit, merge, deploy, or approve code.
 
 This use case demonstrates how a product-level request can become a traceable, reviewable plan for a developer.
 
 ## Use Case 2: AI Coding Assistant
 
-Use Case 2 begins with a backend developer task: validate the submitted password before reset without exposing credentials. The local Python program `coding-assistant-demo.py` supplies the language model with the developer role, task, acceptance criteria, safety rules, and the same limited Express repository context.
+Use Case 2 begins with a backend task: validate the submitted password without exposing credentials. The local Python program `coding-assistant-demo.py` supplies the model with the developer role, task, acceptance criteria, safety rules, and limited Express context.
 
-The generated evidence includes a proposed controller change, valid and invalid test ideas, project scaffolding, follow-up explanations, security and maintainability findings, refactoring guidance, and a comparison between a basic prompt and a more specific prompt. The assistant also identifies limitations that still require human judgment, including reset-token validation, secure password persistence, error handling, and an executable test suite.
+The evidence includes a controller proposal, valid and invalid test ideas, scaffolding, follow-up explanations, security findings, refactoring guidance, and prompt comparison. It also identifies unresolved token, persistence, error-handling, and test-runner concerns.
 
 This use case demonstrates coding assistance as a reviewable proposal rather than automatic code generation.
 
@@ -98,7 +98,7 @@ This use case demonstrates coding assistance as a reviewable proposal rather tha
 
 ### Sample application request path
 
-The AI workflows analyze a small Express application rather than an abstract code sample. Its browser-facing path is:
+The workflows analyze a small Express application. Its browser-facing path is:
 
 | Step | Component | Technical behavior |
 |---|---|---|
@@ -108,7 +108,7 @@ The AI workflows analyze a small Express application rather than an abstract cod
 | 4 | `authController.js` | Returns the form for the GET request and currently returns a simple success response for the POST request. |
 | 5 | AI evidence | Identifies the missing validation, token, persistence, error-handling, and testing concerns without changing these files. |
 
-The `:token` route parameter is deliberately visible in the sample so the review can identify that real token validation is still absent. The sample is therefore useful for demonstrating responsible AI review, but it must not be mistaken for a complete authentication implementation.
+The visible `:token` parameter helps the review identify that token validation is absent. The sample demonstrates responsible AI review, not complete authentication.
 
 ### Use Case 1 request and response
 
@@ -118,7 +118,7 @@ The `:token` route parameter is deliberately visible in the sample so the review
 
 `coding-assistant-demo.py` sends the task, backend role, acceptance criteria, safety rules, selected repository text, and a response contract. Before a live request, secret-like values matching API keys, tokens, or passwords are redacted from the context. The local script checks the required response structure, requires at least three chat answers and three review findings, records the model and provider, and writes both Markdown evidence and `result.json`.
 
-The evidence output has two purposes. `evidence.md` is arranged for a human presentation and contains the proposed code, test ideas, chat answers, review findings, refactoring recommendation, and prompt comparison. `result.json` preserves the structured response and provenance fields so the reviewer can distinguish generated content from the local report formatting.
+The outputs serve different purposes: `evidence.md` is the human presentation report; `result.json` preserves the structured response and provenance.
 
 ### Offline and live modes
 
@@ -168,6 +168,15 @@ The demonstrations can also run in deterministic offline mode. Live mode require
 - An archive of the full repository is also included for offline reference.
 
 The archive and links provide alternative ways to access the same demonstration. They are not separate use cases and do not replace the written evidence.
+
+## File Format and Accessibility
+
+- The primary written documents should be submitted as readable `.docx` files, with their original `.md` versions retained in the repository.
+- Tables and headings should remain intact after Word conversion. The text architecture diagram is provided as a fallback if Mermaid diagrams do not render.
+- Markdown reports are plain-text evidence and can be opened in VS Code, GitHub, or any text editor.
+- `result.json` is structured evidence and can be opened in a text editor or JSON viewer.
+- Video files should use their true archive or video extensions. If an archive was compressed as RAR, it should be labelled `.rar`; do not rely on a misleading `.zip` extension.
+- The attached files are the primary evidence. YouTube and GitHub are optional backups and should not be required to understand the submission.
 
 ## Reviewer Accessibility Checklist
 
