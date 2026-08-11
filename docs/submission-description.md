@@ -6,6 +6,29 @@ This submission presents a Proof of Concept (PoC): a small working demonstration
 
 The attached documents, source files, and Use Case 1 video are the primary submission evidence. The YouTube links and GitHub repository are optional backup access points in case a reviewer has difficulty opening an attachment. The written submission is intended to be understandable without opening an external link.
 
+## Sample Application Context
+
+The sample application is a small, anonymized Node.js and Express password-reset service. It is the codebase that the two AI workflows inspect; it is not the main product being developed and it is not presented as production-ready authentication.
+
+The browser flow is intentionally simple:
+
+1. A user requests `/auth/reset-password/:token` with a reset-token placeholder.
+2. Express routes the `GET` request to a controller that serves `resetPassword.html`.
+3. The user submits a password to the matching `POST` route.
+4. The controller currently returns a simple success message and includes placeholders where real token validation and database persistence would belong.
+5. The AI workflows inspect this behavior and produce recommendations rather than changing it.
+
+The sample contains four files in the AI context allowlist:
+
+| File | Role in the sample |
+|---|---|
+| `server.js` | Starts Express, parses form data, serves the views, and mounts `/auth` routes. |
+| `auth/routes.js` | Maps the password-reset GET and POST requests. |
+| `auth/authController.js` | Serves the form and handles the submitted password. |
+| `views/resetPassword.html` | Provides the browser form used in the demonstration. |
+
+This small scope makes the technical boundary visible. The AI can reason about a real route, controller, and form, while the reviewer can also see exactly what is missing before any production implementation would be safe.
+
 ## Technical Architecture
 
 The PoC has four layers:
@@ -75,6 +98,8 @@ The following limitations define what the evidence does not prove:
 - The local repository reader uses an explicit four-file allowlist. It does not discover every dependency, run the application, run tests, or inspect a production repository.
 - Deterministic mode proves local report generation only. Live mode proves that the configured API returned a structured response, not that every recommendation is correct.
 - The PoC does not measure production time savings, model cost at scale, response quality across a large ticket set, or deployment readiness.
+
+The sample application's missing services are deliberate scope boundaries, not hidden functionality. They allow the review to focus on AI-assisted planning and coding guidance without using real credentials, customer data, or a production authentication system.
 
 Both use cases produce recommendations. A developer must confirm requirements, implement approved changes, and run appropriate tests.
 
