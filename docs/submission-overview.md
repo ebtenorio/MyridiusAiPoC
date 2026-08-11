@@ -1,5 +1,24 @@
 # AI Developer Assistant PoC: Submission Overview
 
+> **Evaluator starting point:** Use the [submission index](README.md) for the shortest navigation path, or continue with this overview for the full explanation.
+
+## Contents
+
+1. [Purpose](#1-purpose)
+2. [Submission at a Glance](#2-submission-at-a-glance)
+3. [Project in Plain Language](#3-project-in-plain-language)
+4. [Technology Architecture](#4-technology-architecture)
+5. [Use Case 1: Story to PR Readiness](#5-use-case-1-story-to-pr-readiness)
+6. [Use Case 2: Coding Task to Reviewed Proposal](#6-use-case-2-coding-task-to-reviewed-proposal)
+7. [Tools and Responsibilities](#7-tools-and-responsibilities)
+8. [Submission File Map](#8-submission-file-map)
+9. [Shared Repository Context](#9-shared-repository-context)
+10. [End-to-End Flow](#10-end-to-end-flow)
+11. [Commands for Demonstration](#11-commands-for-demonstration)
+12. [Safety and Human Oversight](#12-safety-and-human-oversight)
+13. [Evaluation Evidence Map](#13-evaluation-evidence-map)
+14. [Presentation Order](#14-presentation-order)
+
 ## 1. Purpose
 
 This proof of concept demonstrates two related ways an AI assistant can support a software developer working on a sandbox password-reset application:
