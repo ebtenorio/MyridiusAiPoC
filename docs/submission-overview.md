@@ -29,7 +29,29 @@ The two use cases are deliberately sequential. Use Case 1 starts with a product-
 
 Both workflows are local Python demonstrations. Deterministic mode does not need the internet. Live AI mode sends selected sandbox context to the configured OpenAI-compatible HTTPS endpoint. The Express application is separate: it is run locally with Node.js only when demonstrating the password-reset page in a browser. Neither workflow requires public hosting.
 
-## 3. Use Case 1: Story to PR Readiness
+## 3. Project in Plain Language
+
+The project uses a small password-reset application as a realistic but safe setting for demonstrating AI-assisted development. The sample application is not the product being built; it is the codebase that gives both AI workflows something concrete to inspect. A ticket asks for a clearer success experience, while a backend task asks for server-side password validation. The AI tools analyze those requests and produce recommendations. A developer remains responsible for deciding whether the recommendations are correct and for implementing and testing any approved change.
+
+The application itself is intentionally simple. `server.js` starts Express and serves the `views` directory. `routes.js` maps GET and POST requests for `/auth/reset-password/:token`. `authController.js` displays the reset form and currently returns a success message without real token validation or database persistence. That limitation is useful evidence: the assistants can identify the missing security and testing work instead of presenting a small demonstration as production-ready authentication.
+
+## 4. Technology Architecture
+
+| Technology | How it is used | Why it is appropriate for this PoC |
+|---|---|---|
+| Python 3 | Runs `agent-demo.py` and `coding-assistant-demo.py`, reads local files, calls the API in live mode, validates responses, and writes evidence. | Provides a small, inspectable orchestration layer without requiring an agent framework. |
+| OpenAI-compatible Chat Completions API | Receives the selected ticket/task and allowlisted repository context and returns structured language-model analysis. | Demonstrates live AI assistance while allowing the provider or model to be configured through environment variables. |
+| JavaScript and Node.js | Runs the anonymized sample application. | Represents the backend codebase that the AI tools analyze. |
+| Express | Serves the reset form and maps the reset-password routes. | Keeps the target application small enough to understand during a presentation. |
+| `body-parser` | Parses form data submitted to the POST reset route. | Supports the sample HTML form with one focused dependency. |
+| JSON | Stores the ticket and the structured Use Case 2 result. | Gives the workflows predictable input and output contracts. |
+| Markdown | Stores reports, explanations, review findings, and presentation evidence. | Makes the results readable, versionable, and easy to submit. |
+| GitHub and Git | Store and share the anonymized source, documentation, and generated evidence. | Provide version history and an accessible submission location. |
+| PowerShell | Sets environment variables and runs the demonstration commands on Windows. | Matches the project environment and keeps credentials outside source files. |
+
+The architecture has two boundaries. The **local boundary** reads files, controls the prompt inputs, validates the response schema, chooses the output path, and enforces the no-edit rule. The **AI boundary** receives selected text and returns suggestions. The model does not receive the whole workspace, does not receive the API key, and does not execute commands or modify files.
+
+## 5. Use Case 1: Story to PR Readiness
 
 ### Scenario
 
@@ -80,7 +102,7 @@ In other words, Use Case 1 answers: **What needs to change, where would it chang
 
 The agent is the local Python coordinator around the language model. It does not autonomously change the repository. Its contribution is to turn unstructured intake into a consistent review package: it identifies missing information, connects the ticket to specific files, proposes implementation steps and tests, and records risks for a human reviewer. The local program controls which ticket fields and repository files are sent, checks that the response has the required sections, and writes the report under the ticket ID. This creates traceability from the original request to the proposed work.
 
-## 4. Use Case 2: Coding Task to Reviewed Proposal
+## 6. Use Case 2: Coding Task to Reviewed Proposal
 
 ### Scenario
 
@@ -135,7 +157,7 @@ The coding assistant starts after the task has been framed for a backend develop
 
 The distinction between the two systems is therefore practical: the **AI agent organizes and assesses a product request**, while the **AI coding assistant explores an implementation for a defined developer task**. Both remain advisory, and neither replaces testing or human approval.
 
-## 5. Tools and Responsibilities
+## 7. Tools and Responsibilities
 
 The tools have distinct roles. VS Code and GitHub present and share the work; Python controls the workflows; OpenAI supplies live language-model analysis; and Node.js/Express provides the sample application that gives the analysis a realistic codebase.
 
@@ -154,7 +176,7 @@ The tools have distinct roles. VS Code and GitHub present and share the work; Py
 | Markdown | Preserve human-readable evidence and handoff reports | `markdown_docs` |
 | Mermaid | Render the orchestration architecture | [architecture-diagram.md](architecture-diagram.md) |
 
-## 6. Submission File Map
+## 8. Submission File Map
 
 The files are grouped by their role in the evaluator's reading path. The names use `use-case-<number>-<purpose>.md` for use-case-specific material; shared project material keeps a short descriptive name.
 
@@ -169,7 +191,7 @@ The files are grouped by their role in the evaluator's reading path. The names u
 
 Generated reports and structured results are evidence outputs, not additional workflows. They should be read after the overview and the relevant use-case explanation.
 
-## 7. Shared Repository Context
+## 9. Shared Repository Context
 
 The AI tools use only these sandbox files:
 
@@ -180,7 +202,7 @@ The AI tools use only these sandbox files:
 
 This context makes the model's recommendations repository-aware. It also limits the data sent to the provider.
 
-## 8. End-to-End Flow
+## 10. End-to-End Flow
 
 The shared flow is simple: a developer supplies a task, the local program supplies limited repository context, the model returns structured advice, and the learner reviews that advice before any implementation decision.
 
@@ -212,7 +234,7 @@ Optional implementation by the learner
 
 The local programs do not upload themselves to OpenAI. They send selected text as an API request. The API key is supplied through `OPENAI_API_KEY` and is never placed in a prompt, ticket, or report.
 
-## 9. Commands for Demonstration
+## 11. Commands for Demonstration
 
 The demonstrations have three distinct execution requirements:
 
@@ -250,7 +272,7 @@ python coding-assistant-demo.py
 
 Offline mode validates local report generation but is not evidence of a live LLM call.
 
-## 10. Safety and Human Oversight
+## 12. Safety and Human Oversight
 
 The PoC follows these boundaries:
 
@@ -263,7 +285,7 @@ The PoC follows these boundaries:
 
 The complete constraint mapping is in [constraint-compliance.md](constraint-compliance.md).
 
-## 11. Evaluation Evidence Map
+## 13. Evaluation Evidence Map
 
 The evidence is intentionally split across inputs, implementation, generated outputs, and reflection. This lets the evaluator distinguish what the local program did from what the model suggested and what still requires human approval.
 
@@ -277,7 +299,7 @@ The evidence is intentionally split across inputs, implementation, generated out
 | Test proposals | Test sections in both generated reports |
 | Traceability | Ticket/task input linked to repository evidence and generated reports |
 
-## 12. Presentation Order
+## 14. Presentation Order
 
 For a cohesive presentation:
 
