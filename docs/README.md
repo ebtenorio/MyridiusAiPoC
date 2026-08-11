@@ -4,6 +4,8 @@
 
 Read [submission-overview.md](submission-overview.md) first. It explains the project, the two use cases, the technology choices, the local-versus-AI architecture, and the evidence path.
 
+For the short text that accompanies an upload, use [submission-description.md](submission-description.md). It defines the abbreviation Proof of Concept, explains both use cases and tools, and makes clear that attachments are primary while videos and GitHub are optional backups.
+
 The submission tells one story:
 
 1. A product ticket is analyzed into a reviewable implementation plan.
@@ -47,9 +49,10 @@ The local scripts control file access, prompt boundaries, schema validation, out
 | Order | Document | Purpose |
 |---|---|---|
 | 1 | [submission-overview.md](submission-overview.md) | Complete project explanation and evaluator guide. |
-| 2 | [markdown_docs/ticket-6/report.md](../markdown_docs/ticket-6/report.md) | Generated Use Case 1 story-to-PR report. |
-| 3 | [markdown_docs/use-case-2/evidence.md](../markdown_docs/use-case-2/evidence.md) | Generated Use Case 2 coding-assistant evidence. |
-| 4 | [markdown_docs/use-case-2/result.json](../markdown_docs/use-case-2/result.json) | Structured result and AI provenance for Use Case 2. |
+| 2 | [submission-description.md](submission-description.md) | Plain-language upload description with optional video and repository links. |
+| 3 | [markdown_docs/ticket-6/report.md](../markdown_docs/ticket-6/report.md) | Generated Use Case 1 story-to-PR report. |
+| 4 | [markdown_docs/use-case-2/evidence.md](../markdown_docs/use-case-2/evidence.md) | Generated Use Case 2 coding-assistant evidence. |
+| 5 | [markdown_docs/use-case-2/result.json](../markdown_docs/use-case-2/result.json) | Structured result and AI provenance for Use Case 2. |
 
 ## Reproduction Guides
 
@@ -89,6 +92,7 @@ The documents use Markdown for readability and version control. They can be conv
 |---|---|---|
 | Navigation | `README.md` | Submission index and reading order. |
 | Navigation | `submission-overview.md` | Full project overview, architecture, use cases, tools, and evaluation map. |
+| Submission description | `submission-description.md` | Plain-language text for the upload description and optional access links. |
 | Reproduction | `demo-runbook.md` | Short run instructions for both workflows. |
 | Reproduction | `use-case-1-demo-script.md` | Presenter script for the AI agent workflow. |
 | Reproduction | `use-case-2-setup.md` | Configuration and setup for the AI coding assistant. |
