@@ -9,7 +9,16 @@ This proof of concept demonstrates two related ways an AI assistant can support 
 
 Both use cases use the same anonymized Express repository. The difference is the developer workflow being demonstrated.
 
-## 2. Use Case 1: Story to PR Readiness
+## 2. Submission at a Glance
+
+| Use case | Developer problem | Input | Main output | What it demonstrates |
+|---|---|---|---|---|
+| 1. Story to PR readiness | Turn a backlog ticket into work that is ready for developer review. | `tickets/new-ticket.json` | A structured Markdown report for the ticket. | Requirements clarification, repository-aware planning, test proposals, risk review, and PR handoff. |
+| 2. Coding task to reviewed proposal | Turn a developer comment into a focused code proposal and review. | A defined coding task and role context in `coding-assistant-demo.py` | Markdown and JSON evidence containing code, tests, review findings, and refactoring guidance. | Interactive coding assistance, prompt iteration, security review, and human approval. |
+
+Both workflows are local Python demonstrations. Deterministic mode does not need the internet. Live AI mode sends selected sandbox context to the configured OpenAI-compatible HTTPS endpoint. The Express application is separate: it is run locally with Node.js only when demonstrating the password-reset page in a browser. Neither workflow requires public hosting.
+
+## 3. Use Case 1: Story to PR Readiness
 
 ### Scenario
 
@@ -54,7 +63,7 @@ Example evidence: [markdown_docs/ticket-6/report.md](../markdown_docs/ticket-6/r
 
 This use case reduces the manual effort required to move from a vague or incomplete ticket to a reviewable implementation plan. It keeps traceability between the original story, repository context, proposed work, tests, risks, and PR handoff.
 
-## 3. Use Case 2: Coding Task to Reviewed Proposal
+## 4. Use Case 2: Coding Task to Reviewed Proposal
 
 ### Scenario
 
@@ -101,7 +110,7 @@ Example evidence: [markdown_docs/use-case-2/evidence.md](../markdown_docs/use-ca
 
 This use case demonstrates interactive coding assistance after a task has been identified. It shows that the assistant can generate a focused proposal and then challenge its own output by identifying token-validation, error-handling, persistence, and test-coverage gaps.
 
-## 4. Tools and Responsibilities
+## 5. Tools and Responsibilities
 
 | Tool or component | Responsibility | Evidence |
 |---|---|---|
@@ -118,7 +127,7 @@ This use case demonstrates interactive coding assistance after a task has been i
 | Markdown | Preserve human-readable evidence and handoff reports | `markdown_docs` |
 | Mermaid | Render the orchestration architecture | [architecture-diagram.md](architecture-diagram.md) |
 
-## 5. Shared Repository Context
+## 6. Shared Repository Context
 
 The AI tools use only these sandbox files:
 
@@ -129,7 +138,7 @@ The AI tools use only these sandbox files:
 
 This context makes the model's recommendations repository-aware. It also limits the data sent to the provider.
 
-## 6. End-to-End Flow
+## 7. End-to-End Flow
 
 ```text
 Developer task or ticket
@@ -159,7 +168,13 @@ Optional implementation by the learner
 
 The local programs do not upload themselves to OpenAI. They send selected text as an API request. The API key is supplied through `OPENAI_API_KEY` and is never placed in a prompt, ticket, or report.
 
-## 7. Commands for Demonstration
+## 8. Commands for Demonstration
+
+The demonstrations have three distinct execution requirements:
+
+- **Offline evidence generation:** Python runs locally and writes Markdown/JSON files. No browser or internet connection is required.
+- **Live AI evidence:** Python runs locally and makes an outbound HTTPS request. A valid `OPENAI_API_KEY` is required; no public web page is required.
+- **Browser application demo:** Node.js runs the sample Express server at `http://localhost:3000`. Public deployment is optional and is outside this PoC's scope.
 
 ### Use Case 1 live run
 
@@ -191,7 +206,7 @@ python coding-assistant-demo.py
 
 Offline mode validates local report generation but is not evidence of a live LLM call.
 
-## 8. Safety and Human Oversight
+## 9. Safety and Human Oversight
 
 The PoC follows these boundaries:
 
@@ -204,7 +219,7 @@ The PoC follows these boundaries:
 
 The complete constraint mapping is in [constraint-compliance.md](constraint-compliance.md).
 
-## 9. Evaluation Evidence Map
+## 10. Evaluation Evidence Map
 
 | Expected capability | Demonstrated by |
 |---|---|
@@ -216,7 +231,7 @@ The complete constraint mapping is in [constraint-compliance.md](constraint-comp
 | Test proposals | Test sections in both generated reports |
 | Traceability | Ticket/task input linked to repository evidence and generated reports |
 
-## 10. Presentation Order
+## 11. Presentation Order
 
 For a cohesive presentation:
 
