@@ -31,6 +31,38 @@ flowchart LR
 
 The model receives selected text only. It does not receive the API key, the entire workspace, or permission to execute commands or modify files. The Express application is separate from this analysis pipeline and is used only as the sample repository and optional local browser demo.
 
+### Word-friendly architecture view
+
+The following equivalent view is included for reviewers whose document viewer does not render Mermaid diagrams:
+
+```text
+INPUT
+	Ticket JSON or backend task
+			 |
+			 v
+LOCAL ORCHESTRATOR
+	Read allowlisted files
+	Build prompts and safety rules
+	Select deterministic or live mode
+			 |
+			 v
+AI SERVICE (live mode only)
+	Receive selected text in a JSON request
+	Return structured analysis
+			 |
+			 v
+LOCAL VALIDATION
+	Check required fields and evidence counts
+			 |
+			 v
+EVIDENCE
+	Markdown report + JSON result where applicable
+			 |
+			 v
+HUMAN REVIEW
+	Approve, request clarification, or reject
+```
+
 ## Technical Scope and Limitations
 
 The implemented PoC demonstrates local orchestration, controlled repository reading, prompt construction, live API communication, structured-response validation, Markdown/JSON evidence generation, and a human approval boundary. It does not demonstrate an autonomous software agent with permission to change or release code.
@@ -64,6 +96,20 @@ This use case demonstrates coding assistance as a reviewable proposal rather tha
 
 ## Technical Processing Details
 
+### Sample application request path
+
+The AI workflows analyze a small Express application rather than an abstract code sample. Its browser-facing path is:
+
+| Step | Component | Technical behavior |
+|---|---|---|
+| 1 | `server.js` | Creates the Express application, parses URL-encoded form data, serves the `views` directory, and mounts the authentication routes at `/auth`. |
+| 2 | `routes.js` | Maps `GET /auth/reset-password/:token` to the reset-form controller and `POST /auth/reset-password/:token` to the reset handler. |
+| 3 | `resetPassword.html` | Presents the password-reset form to the user. |
+| 4 | `authController.js` | Returns the form for the GET request and currently returns a simple success response for the POST request. |
+| 5 | AI evidence | Identifies the missing validation, token, persistence, error-handling, and testing concerns without changing these files. |
+
+The `:token` route parameter is deliberately visible in the sample so the review can identify that real token validation is still absent. The sample is therefore useful for demonstrating responsible AI review, but it must not be mistaken for a complete authentication implementation.
+
 ### Use Case 1 request and response
 
 `agent-demo.py` sends the ticket identifier, title, story, acceptance criteria, and selected repository text. Its system instruction requires the model to return JSON fields for the title, story, acceptance criteria, clarification, impacted files, implementation plan, test cases, review findings, and pull-request summary. The local script rejects an incomplete response before it creates the report and controls the output folder using the original ticket ID.
@@ -71,6 +117,8 @@ This use case demonstrates coding assistance as a reviewable proposal rather tha
 ### Use Case 2 request and response
 
 `coding-assistant-demo.py` sends the task, backend role, acceptance criteria, safety rules, selected repository text, and a response contract. Before a live request, secret-like values matching API keys, tokens, or passwords are redacted from the context. The local script checks the required response structure, requires at least three chat answers and three review findings, records the model and provider, and writes both Markdown evidence and `result.json`.
+
+The evidence output has two purposes. `evidence.md` is arranged for a human presentation and contains the proposed code, test ideas, chat answers, review findings, refactoring recommendation, and prompt comparison. `result.json` preserves the structured response and provenance fields so the reviewer can distinguish generated content from the local report formatting.
 
 ### Offline and live modes
 
