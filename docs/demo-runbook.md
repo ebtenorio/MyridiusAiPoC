@@ -1,10 +1,8 @@
 # Demo Runbook
 
 ## Goal
-Demonstrate a story-to-PR readiness workflow for a sandbox authentication sample repository.
 
-Use Case 2 is documented separately as a role-aware AI coding assistant workflow:
-[setup and runbook](use-case-2-setup.md), [prompt library](use-case-2-prompts.md), and [reflection](use-case-2-reflection.md).
+This runbook is the short reproduction guide for both workflows in the submission. Use Case 1 turns a product ticket into a PR-readiness report. Use Case 2 then turns a focused backend task into a code, test, and review proposal. The [submission overview](submission-overview.md) explains the meaning of each result; this file focuses on running them.
 
 ## Steps
 1. Create or edit a ticket JSON file under the tickets folder.
@@ -28,7 +26,8 @@ python coding-assistant-demo.py
 Review the generated evidence in `markdown_docs/use-case-2/evidence.md`.
 
 ## Expected Evidence
-- The completed live demo requirement is covered separately by the existing sample runs.
+- Use Case 1 produces a ticket report under `markdown_docs/<ticket-id>/report.md`.
+- Use Case 2 produces `markdown_docs/use-case-2/evidence.md` and `result.json`.
 - Each AI report includes clarification, impacted files, implementation guidance, tests, review findings, and a PR handoff summary.
 - The workflow preserves the approval gate before major changes are suggested.
 - AI mode sends repository context and ticket details to the configured model but never writes application code or merges changes.

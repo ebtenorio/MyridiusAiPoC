@@ -9,6 +9,17 @@ This proof of concept demonstrates two related ways an AI assistant can support 
 
 Both use cases use the same anonymized Express repository. The difference is the developer workflow being demonstrated.
 
+### How to read this submission
+
+Read this document first. It explains the problem, the relationship between the two use cases, the tools, and the evidence. Then use the links below in this order:
+
+1. Read the Use Case 1 report to see how a ticket becomes a reviewable plan.
+2. Read the Use Case 2 evidence to see how a coding task becomes a code-and-review proposal.
+3. Use the demo scripts to reproduce the workflows.
+4. Use the architecture, tool evidence, review, reflection, and constraint documents as supporting detail.
+
+The two use cases are deliberately sequential. Use Case 1 starts with a product-level story and establishes what should be changed. Use Case 2 starts with a developer-level task and explores how the change could be designed, tested, and reviewed. Neither workflow applies code automatically; both end with human approval.
+
 ## 2. Submission at a Glance
 
 | Use case | Developer problem | Input | Main output | What it demonstrates |
@@ -63,6 +74,8 @@ Example evidence: [markdown_docs/ticket-6/report.md](../markdown_docs/ticket-6/r
 
 This use case reduces the manual effort required to move from a vague or incomplete ticket to a reviewable implementation plan. It keeps traceability between the original story, repository context, proposed work, tests, risks, and PR handoff.
 
+In other words, Use Case 1 answers: **What needs to change, where would it change, and what should a developer check before implementation?**
+
 ## 4. Use Case 2: Coding Task to Reviewed Proposal
 
 ### Scenario
@@ -110,7 +123,11 @@ Example evidence: [markdown_docs/use-case-2/evidence.md](../markdown_docs/use-ca
 
 This use case demonstrates interactive coding assistance after a task has been identified. It shows that the assistant can generate a focused proposal and then challenge its own output by identifying token-validation, error-handling, persistence, and test-coverage gaps.
 
+In other words, Use Case 2 answers: **What might a safe implementation look like, what tests would support it, and what risks still require a developer's judgment?**
+
 ## 5. Tools and Responsibilities
+
+The tools have distinct roles. VS Code and GitHub present and share the work; Python controls the workflows; OpenAI supplies live language-model analysis; and Node.js/Express provides the sample application that gives the analysis a realistic codebase.
 
 | Tool or component | Responsibility | Evidence |
 |---|---|---|
@@ -139,6 +156,8 @@ The AI tools use only these sandbox files:
 This context makes the model's recommendations repository-aware. It also limits the data sent to the provider.
 
 ## 7. End-to-End Flow
+
+The shared flow is simple: a developer supplies a task, the local program supplies limited repository context, the model returns structured advice, and the learner reviews that advice before any implementation decision.
 
 ```text
 Developer task or ticket
@@ -220,6 +239,8 @@ The PoC follows these boundaries:
 The complete constraint mapping is in [constraint-compliance.md](constraint-compliance.md).
 
 ## 10. Evaluation Evidence Map
+
+The evidence is intentionally split across inputs, implementation, generated outputs, and reflection. This lets the evaluator distinguish what the local program did from what the model suggested and what still requires human approval.
 
 | Expected capability | Demonstrated by |
 |---|---|

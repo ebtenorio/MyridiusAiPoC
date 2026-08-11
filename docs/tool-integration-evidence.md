@@ -56,7 +56,7 @@ Implemented in `write_markdown()` and `build_report()` in [agent-demo.py](../age
 
 Reports are stored by the locally controlled ticket ID:
 
-- [markdown_docs/ticket-5/report.md](../markdown_docs/ticket-5/report.md)
+- [markdown_docs/ticket-6/report.md](../markdown_docs/ticket-6/report.md)
 - [markdown_docs/README.md](../markdown_docs/README.md)
 
 ## 6. Test runner and mock API status

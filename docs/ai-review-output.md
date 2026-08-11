@@ -1,6 +1,6 @@
 # AI Review Output
 
-This is the review-output deliverable from the live AI analysis of the confirmation-page ticket. It is based on [markdown_docs/ticket-5/report.md](../markdown_docs/ticket-5/report.md) and the sandbox repository context.
+This is the review-output deliverable from the live AI analysis of the confirmation-page ticket. It is based on [markdown_docs/ticket-6/report.md](../markdown_docs/ticket-6/report.md) and the sandbox repository context.
 
 ## Readability
 

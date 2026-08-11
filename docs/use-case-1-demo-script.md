@@ -72,7 +72,7 @@ Open [tickets/new-ticket.json](../tickets/new-ticket.json) and say:
 Point out that the ticket ID controls the local report folder:
 
 ```json
-"id": "ticket-5"
+"id": "ticket-6"
 ```
 
 Explain:
@@ -161,7 +161,7 @@ Say:
 
 ## Part 6: Show the Result
 
-Open [markdown_docs/ticket-5/report.md](../markdown_docs/ticket-5/report.md).
+Open [markdown_docs/ticket-6/report.md](../markdown_docs/ticket-6/report.md).
 
 Walk through the sections:
 
