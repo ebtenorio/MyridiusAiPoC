@@ -76,6 +76,10 @@ This use case reduces the manual effort required to move from a vague or incompl
 
 In other words, Use Case 1 answers: **What needs to change, where would it change, and what should a developer check before implementation?**
 
+### What the AI agent contributes
+
+The agent is the local Python coordinator around the language model. It does not autonomously change the repository. Its contribution is to turn unstructured intake into a consistent review package: it identifies missing information, connects the ticket to specific files, proposes implementation steps and tests, and records risks for a human reviewer. The local program controls which ticket fields and repository files are sent, checks that the response has the required sections, and writes the report under the ticket ID. This creates traceability from the original request to the proposed work.
+
 ## 4. Use Case 2: Coding Task to Reviewed Proposal
 
 ### Scenario
@@ -125,6 +129,12 @@ This use case demonstrates interactive coding assistance after a task has been i
 
 In other words, Use Case 2 answers: **What might a safe implementation look like, what tests would support it, and what risks still require a developer's judgment?**
 
+### What the AI coding assistant contributes
+
+The coding assistant starts after the task has been framed for a backend developer. It receives the developer's comment, role, acceptance criteria, coding rules, and the same limited Express context. It then produces several forms of assistance in one response: a possible controller change, negative-path tests, test-boundary scaffolding, explanations to likely follow-up questions, a review of security and maintainability risks, and a behavior-preserving refactoring suggestion. The important result is not only the proposed validation; it is the review that explains what the proposal still does not solve, including token validation, password persistence, error handling, and executable tests.
+
+The distinction between the two systems is therefore practical: the **AI agent organizes and assesses a product request**, while the **AI coding assistant explores an implementation for a defined developer task**. Both remain advisory, and neither replaces testing or human approval.
+
 ## 5. Tools and Responsibilities
 
 The tools have distinct roles. VS Code and GitHub present and share the work; Python controls the workflows; OpenAI supplies live language-model analysis; and Node.js/Express provides the sample application that gives the analysis a realistic codebase.
@@ -144,7 +154,22 @@ The tools have distinct roles. VS Code and GitHub present and share the work; Py
 | Markdown | Preserve human-readable evidence and handoff reports | `markdown_docs` |
 | Mermaid | Render the orchestration architecture | [architecture-diagram.md](architecture-diagram.md) |
 
-## 6. Shared Repository Context
+## 6. Submission File Map
+
+The files are grouped by their role in the evaluator's reading path. The names use `use-case-<number>-<purpose>.md` for use-case-specific material; shared project material keeps a short descriptive name.
+
+| Reading purpose | File | Why it is included |
+|---|---|---|
+| Start here | [submission-overview.md](submission-overview.md) | Explains the project, use cases, tools, relationship, and evidence path. |
+| Reproduce both workflows | [demo-runbook.md](demo-runbook.md) | Gives the shortest local and live execution instructions. |
+| Understand Use Case 1 | [use-case-1-demo-script.md](use-case-1-demo-script.md) and [markdown_docs/ticket-6/report.md](../markdown_docs/ticket-6/report.md) | Shows the presentation sequence and the generated ticket report. |
+| Understand Use Case 2 | [use-case-2-setup.md](use-case-2-setup.md), [use-case-2-demo-script.md](use-case-2-demo-script.md), and [markdown_docs/use-case-2/evidence.md](../markdown_docs/use-case-2/evidence.md) | Explains setup, presentation, and the generated coding-assistant evidence. |
+| Inspect prompts and tools | [use-case-2-prompts.md](use-case-2-prompts.md), [prompt-pack.md](prompt-pack.md), and [tool-integration-evidence.md](tool-integration-evidence.md) | Shows the instructions, data boundary, API call, validation, and report-writing tools. |
+| Evaluate quality and limits | [use-case-2-ai-review-report.md](use-case-2-ai-review-report.md), [use-case-2-reflection.md](use-case-2-reflection.md), [impact-narrative.md](impact-narrative.md), and [constraint-compliance.md](constraint-compliance.md) | Separates AI findings, human reflection, expected impact, and rule compliance. |
+
+Generated reports and structured results are evidence outputs, not additional workflows. They should be read after the overview and the relevant use-case explanation.
+
+## 7. Shared Repository Context
 
 The AI tools use only these sandbox files:
 
@@ -155,7 +180,7 @@ The AI tools use only these sandbox files:
 
 This context makes the model's recommendations repository-aware. It also limits the data sent to the provider.
 
-## 7. End-to-End Flow
+## 8. End-to-End Flow
 
 The shared flow is simple: a developer supplies a task, the local program supplies limited repository context, the model returns structured advice, and the learner reviews that advice before any implementation decision.
 
@@ -187,7 +212,7 @@ Optional implementation by the learner
 
 The local programs do not upload themselves to OpenAI. They send selected text as an API request. The API key is supplied through `OPENAI_API_KEY` and is never placed in a prompt, ticket, or report.
 
-## 8. Commands for Demonstration
+## 9. Commands for Demonstration
 
 The demonstrations have three distinct execution requirements:
 
@@ -225,7 +250,7 @@ python coding-assistant-demo.py
 
 Offline mode validates local report generation but is not evidence of a live LLM call.
 
-## 9. Safety and Human Oversight
+## 10. Safety and Human Oversight
 
 The PoC follows these boundaries:
 
@@ -238,7 +263,7 @@ The PoC follows these boundaries:
 
 The complete constraint mapping is in [constraint-compliance.md](constraint-compliance.md).
 
-## 10. Evaluation Evidence Map
+## 11. Evaluation Evidence Map
 
 The evidence is intentionally split across inputs, implementation, generated outputs, and reflection. This lets the evaluator distinguish what the local program did from what the model suggested and what still requires human approval.
 
@@ -252,7 +277,7 @@ The evidence is intentionally split across inputs, implementation, generated out
 | Test proposals | Test sections in both generated reports |
 | Traceability | Ticket/task input linked to repository evidence and generated reports |
 
-## 11. Presentation Order
+## 12. Presentation Order
 
 For a cohesive presentation:
 
