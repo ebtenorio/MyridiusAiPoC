@@ -103,6 +103,19 @@ The sample application's missing services are deliberate scope boundaries, not h
 
 Both use cases produce recommendations. A developer must confirm requirements, implement approved changes, and run appropriate tests.
 
+## AI Model Limitations and Potential Bias
+
+The language model is useful for producing a first draft, but its output is not independent verification. It can:
+
+- **Hallucinate:** suggest files, APIs, dependencies, or behavior that are not present in the sample repository.
+- **Overgeneralize:** recommend a familiar password policy or authentication pattern that does not match the real product requirements.
+- **Miss risks:** produce plausible validation code while overlooking token expiry, account binding, password hashing, logging, or failure handling.
+- **Reflect framing bias:** focus on the requirements emphasized in the prompt and underweight concerns that were omitted from the ticket.
+- **Show automation bias:** appear authoritative because the response is fluent and structured, even when it is incomplete or incorrect.
+- **Inherit data and model bias:** reproduce common software patterns that may favor conventional architectures, language, or security assumptions over the needs of a particular team or user group.
+
+The PoC reduces these risks but does not eliminate them. It uses an explicit repository allowlist, role and safety instructions, structured-response checks, redaction of secret-like context in Use Case 2, deterministic fallback output, and a required human approval step. These controls verify format and constrain the workflow; they do not verify the technical correctness of the model's recommendations. Reviewers should compare every proposed file, code path, security claim, and test case with the source repository and the actual product requirements.
+
 ## Use Case 1: AI Agent for Story-to-PR Readiness
 
 Use Case 1 begins with a product ticket requesting a clearer password-reset confirmation page. The local Python program `agent-demo.py` reads the ticket, adds selected repository context, and sends it to an OpenAI-compatible language-model endpoint in live mode.
@@ -111,6 +124,10 @@ The program validates the response and writes a Markdown report containing assum
 
 This use case demonstrates how a product-level request can become a traceable, reviewable plan for a developer.
 
+### Concrete example
+
+For the confirmation-page ticket, the expected useful output is not a finished page. It is a plan that identifies the reset controller and view as likely impact areas, asks whether the success behavior should render or redirect, proposes tests for safe confirmation content, and flags that passwords and reset tokens must not appear in the response. A reviewer can check each claim against the ticket and repository before implementation.
+
 ## Use Case 2: AI Coding Assistant
 
 Use Case 2 begins with a backend task: validate the submitted password without exposing credentials. The local Python program `coding-assistant-demo.py` supplies the model with the developer role, task, acceptance criteria, safety rules, and limited Express context.
@@ -118,6 +135,10 @@ Use Case 2 begins with a backend task: validate the submitted password without e
 The evidence includes a controller proposal, valid and invalid test ideas, scaffolding, follow-up explanations, security findings, refactoring guidance, and prompt comparison. It also identifies unresolved token, persistence, error-handling, and test-runner concerns.
 
 This use case demonstrates coding assistance as a reviewable proposal rather than automatic code generation.
+
+### Concrete example
+
+For the password-validation task, the deterministic proposal rejects a missing or shorter-than-eight-character password with a safe error while preserving the existing valid-input success response. The accompanying review points out that this is still insufficient without server-side reset-token validation, secure password persistence, error handling, and executable tests. This illustrates both the value of the model's draft and the reason human review remains necessary.
 
 ## Technical Processing Details
 
