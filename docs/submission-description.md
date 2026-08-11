@@ -90,6 +90,17 @@ HUMAN REVIEW
 
 The implemented PoC demonstrates local orchestration, controlled repository reading, prompt construction, live API communication, structured-response validation, Markdown/JSON evidence generation, and a human approval boundary. It does not demonstrate an autonomous software agent with permission to change or release code.
 
+### Technical scope matrix
+
+| Capability | Demonstrated in this PoC | Deliberately outside scope | Review implication |
+|---|---|---|---|
+| Ticket and task intake | JSON ticket loading and a defined backend task. | Integration with Jira, GitHub Issues, or another work-management system. | The evaluator can inspect the exact local inputs. |
+| Repository context | Four explicitly allowlisted Express files are read. | Whole-repository discovery, dependency analysis, or production repository access. | Recommendations are limited to the supplied context. |
+| AI generation | Live JSON requests to an OpenAI-compatible endpoint. | Model training, fine-tuning, or guaranteed factual correctness. | Structured output is checked, but a developer must verify substance. |
+| Response handling | Required fields, evidence counts, provenance, and local Markdown/JSON output. | Automated code execution, test execution, merge, or deployment. | The result is evidence and advice, not an applied patch. |
+| Authentication behavior | A browser-facing Express reset form and GET/POST route are available as sample context. | Real tokens, account identity, password hashing, persistence, and production error handling. | Security recommendations remain proposals until implemented and tested. |
+| Evaluation | Human review and approval are explicit workflow steps. | A measured production impact study or large-scale quality benchmark. | The PoC demonstrates workflow value, not production performance. |
+
 The following limitations define what the evidence does not prove:
 
 - The Express application is an anonymized sample. It has no real database, password-hashing service, token store, authentication provider, or production error middleware.
@@ -128,6 +139,8 @@ This use case demonstrates how a product-level request can become a traceable, r
 
 For the confirmation-page ticket, the expected useful output is not a finished page. It is a plan that identifies the reset controller and view as likely impact areas, asks whether the success behavior should render or redirect, proposes tests for safe confirmation content, and flags that passwords and reset tokens must not appear in the response. A reviewer can check each claim against the ticket and repository before implementation.
 
+For example, the input contains the story, “As a user, I want a clear confirmation after resetting my password,” and acceptance criteria covering a safe message, no credential exposure, and a next step. The generated report converts that input into separate sections for clarification, impacted files, implementation steps, tests, review findings, and a PR summary. This shows the transformation from product language to developer-ready evidence.
+
 ## Use Case 2: AI Coding Assistant
 
 Use Case 2 begins with a backend task: validate the submitted password without exposing credentials. The local Python program `coding-assistant-demo.py` supplies the model with the developer role, task, acceptance criteria, safety rules, and limited Express context.
@@ -139,6 +152,8 @@ This use case demonstrates coding assistance as a reviewable proposal rather tha
 ### Concrete example
 
 For the password-validation task, the deterministic proposal rejects a missing or shorter-than-eight-character password with a safe error while preserving the existing valid-input success response. The accompanying review points out that this is still insufficient without server-side reset-token validation, secure password persistence, error handling, and executable tests. This illustrates both the value of the model's draft and the reason human review remains necessary.
+
+For example, a request with `{}` should produce a `400` response, a short password such as `short` should also be rejected, and `valid-pass` should preserve the existing success message. These are proposed checks in the evidence, not claims that an automated test suite has already passed. The distinction is important because the sample repository has no configured test runner.
 
 ## Technical Processing Details
 
