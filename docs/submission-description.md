@@ -6,6 +6,31 @@ This submission presents a Proof of Concept (PoC), meaning a small working demon
 
 The attached documents, source files, and Use Case 1 video are the primary submission evidence. The YouTube links and GitHub repository are optional backup access points in case a reviewer has difficulty opening an attachment. The written submission is intended to be understandable without opening an external link.
 
+## Technical Architecture
+
+The PoC has four layers:
+
+1. **Input layer:** a ticket JSON file for Use Case 1 or a defined task dictionary for Use Case 2.
+2. **Context layer:** each Python program reads only four allowlisted Express files: the server, routes, controller, and reset-form view.
+3. **AI and validation layer:** live mode sends a JSON request to the OpenAI-compatible Chat Completions endpoint. The local program parses the response and checks that the expected fields are present before writing evidence.
+4. **Evidence layer:** the validated result is written as human-readable Markdown and, for Use Case 2, a structured JSON result. A learner reviews the result before any implementation decision.
+
+```mermaid
+flowchart LR
+	A[Ticket or backend task] --> B[Local Python orchestrator]
+	B --> C[Allowlisted repository context]
+	B --> D[Prompt and safety rules]
+	C --> E[OpenAI-compatible API]
+	D --> E
+	E --> F[Structured JSON response]
+	F --> G[Local schema validation]
+	G --> H[Markdown and JSON evidence]
+	H --> I[Human review and approval]
+	I --> J[Optional implementation]
+```
+
+The model receives selected text only. It does not receive the API key, the entire workspace, or permission to execute commands or modify files. The Express application is separate from this analysis pipeline and is used only as the sample repository and optional local browser demo.
+
 ## Use Case 1: AI Agent for Story-to-PR Readiness
 
 Use Case 1 begins with a product ticket requesting a clearer confirmation page after a successful password reset. The local Python program `agent-demo.py` reads the ticket, adds context from selected sample repository files, and sends that controlled context to an OpenAI-compatible language-model endpoint when live mode is enabled.
@@ -21,6 +46,42 @@ Use Case 2 begins with a backend developer task: validate the submitted password
 The generated evidence includes a proposed controller change, valid and invalid test ideas, project scaffolding, follow-up explanations, security and maintainability findings, refactoring guidance, and a comparison between a basic prompt and a more specific prompt. The assistant also identifies limitations that still require human judgment, including reset-token validation, secure password persistence, error handling, and an executable test suite.
 
 This use case demonstrates coding assistance as a reviewable proposal rather than automatic code generation.
+
+## Technical Processing Details
+
+### Use Case 1 request and response
+
+`agent-demo.py` sends the ticket identifier, title, story, acceptance criteria, and selected repository text. Its system instruction requires the model to return JSON fields for the title, story, acceptance criteria, clarification, impacted files, implementation plan, test cases, review findings, and pull-request summary. The local script rejects an incomplete response before it creates the report and controls the output folder using the original ticket ID.
+
+### Use Case 2 request and response
+
+`coding-assistant-demo.py` sends the task, backend role, acceptance criteria, safety rules, selected repository text, and a response contract. Before a live request, secret-like values matching API keys, tokens, or passwords are redacted from the context. The local script checks the required response structure, requires at least three chat answers and three review findings, records the model and provider, and writes both Markdown evidence and `result.json`.
+
+### Offline and live modes
+
+| Mode | Processing | Network requirement | Evidence meaning |
+|---|---|---|---|
+| Deterministic/offline | Uses the local fallback response and writes the same style of evidence. | None. | Confirms that local orchestration and report generation work; it is not proof of a live model call. |
+| Live AI | Sends the controlled JSON request to the configured OpenAI-compatible endpoint. | Outbound HTTPS and `OPENAI_API_KEY`. | Records AI-generated provenance, model, and provider endpoint in the evidence. |
+
+### Use-case relationship
+
+```mermaid
+sequenceDiagram
+	participant D as Developer
+	participant A as AI Agent
+	participant C as Coding Assistant
+	participant H as Human Reviewer
+
+	D->>A: Submit product ticket
+	A->>A: Read allowlisted code and validate response
+	A-->>D: Return plan, tests, risks, and PR handoff
+	D->>C: Define backend implementation task
+	C->>C: Generate proposal, tests, review, and refactoring guidance
+	C-->>D: Return Markdown and JSON evidence
+	D->>H: Present recommendations for approval
+	H-->>D: Approve, request changes, or reject
+```
 
 ## Tools and Technologies
 
